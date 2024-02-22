@@ -1,7 +1,5 @@
 import random
-from dishes_data import dishes  # Import the dishes from the new file
-
-# User's available ingredients
+from dishes_data import dishes
 available_ingredients = set()
 
 # Set to store rejected ingredients for each dish
@@ -35,7 +33,6 @@ def get_recommendation():
             f"I would not like {dishes[dish]['category']} food now",
             f"There are no ingredients at home for the suggested {
                 dishes[dish]['category']} dish",
-            # Add more predefined reasons based on the dish category
         ]
 
         print("\nReason options:")
@@ -48,6 +45,8 @@ def get_recommendation():
 
         if reason == f"There are no ingredients at home for the suggested {dishes[dish]['category']} dish":
             update_rejected_ingredients(dish)
+        elif reason == f"I would not like {dishes[dish]['category']} food now":
+            excluded_categories.add(dishes[dish]['category'])
 
 
 def show_ingredients_info(dish):
