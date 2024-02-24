@@ -56,6 +56,15 @@ def get_recommendation():
             update_rejected_ingredients(dish)
         elif reason == f"I would not like {dishes[dish]['category']} food now":
             excluded_categories.add(dishes[dish]['category'])
+    elif response == "yes":
+        response_side = input("Do you want any side dish? (yes/no): ").lower()
+        if response_side == "yes":
+            # list all side dish here and chose like with numbers
+            print("Please chose one of the side dish")
+        response_soup = input("Do you want any soup? (yes/no): ").lower()
+        if response_soup == "yes":
+            # list all soup here and chose like with numbers
+            print("Please chose one of the soup")
 
 
 def show_ingredients_info(dish):
