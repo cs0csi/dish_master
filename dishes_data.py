@@ -52,21 +52,6 @@ dishes = {
     "Rise": {
         "ingredients": ["rise", "oil"],
         "category": "savory",
-        "type": "side_dish"
-    },
-    "Potato": {
-        "ingredients": ["rise", "oil"],
-        "category": "savory",
-        "type": "side_dish"
-    },
-    "Soup_test1": {
-        "ingredients": ["rise", "oil"],
-        "category": "savory",
-        "type": "soup"
-    },
-    "Soup_test2": {
-        "ingredients": ["rise", "oil"],
-        "category": "savory",
-        "type": "soup"
+        "type": "side"
     },
 }
