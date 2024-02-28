@@ -10,52 +10,91 @@ rejected_ingredients = {dish: set() for dish in dishes}
 # Set to store excluded categories
 excluded_categories = set()
 
+# Set to store maximum preparation time the user can spend
+max_preparation_time = None
+
 
 def get_recommendation():
     global excluded_categories
+    global max_preparation_time
 
-    # Filter dishes based on available ingredients and excluded categories
     dish_options = [dish for dish in dishes.keys() if not any(
-        ingredient in rejected_ingredients[dish] for ingredient in dishes[dish]['ingredients']) and dishes[dish]['category'] not in excluded_categories]
+        ingredient in rejected_ingredients[dish] for ingredient in dishes[dish]['ingredients']) and
+        dishes[dish]['category'] not in excluded_categories and
+        (max_preparation_time is None or dishes[dish]['preparation_time'] <= max_preparation_time)]
 
     if not dish_options:
         print("Sorry, no suitable dishes available based on your current restrictions.")
         return
 
-    # Randomly choose a dish from the available options
     dish = random.choice(dish_options)
     print(f"Recommended dish: {dish}")
 
-    # Display ingredients for the recommended dish
     ingredients = show_ingredients_info(dish)
     print(f"\nIngredients for {dish}:")
     for i, ingredient in enumerate(ingredients, start=1):
         print(f"- {ingredient}")
 
-    # Prompt user for suitability
+    print(f"Preparation time: {dishes[dish]['preparation_time']} minutes")
+
     response = input("Is this suitable? (yes/no): ").lower()
 
     if response == "no":
-        # Provide reasons for user rejection
         reason_options = [
             f"I would not like {dishes[dish]['category']} food now",
             f"There are no ingredients at home for the suggested {
                 dishes[dish]['category']} dish",
+            f"I don't have that much time",
         ]
 
         print("\nReason options:")
         for i, reason in enumerate(reason_options, start=1):
             print(f"{i}. {reason}")
 
-        # Prompt user to choose a reason and handle accordingly
         reason_index = int(
             input("Choose a reason by entering its number (1, 2, etc.): ")) - 1
         reason = reason_options[reason_index]
 
         if reason == f"There are no ingredients at home for the suggested {dishes[dish]['category']} dish":
             update_rejected_ingredients(dish)
+        elif reason == f"I don't have that much time":
+            max_preparation_time = int(
+                input("Enter the maximum preparation time you have (in minutes): "))
         elif reason == f"I would not like {dishes[dish]['category']} food now":
             excluded_categories.add(dishes[dish]['category'])
+    # Inside get_recommendation() function, after asking if the dish is suitable
+    elif response == "yes":
+        response_side = input("Do you want any side dish? (yes/no): ").lower()
+        if response_side == "yes":
+            # Filter available side dishes
+            side_dishes = [dish for dish in dishes.keys(
+            ) if dishes[dish]['type'] == 'side_dish']
+
+            if side_dishes:
+                print("\nAvailable Side Dishes:")
+                for i, side_dish in enumerate(side_dishes, start=1):
+                    print(f"{i}. {side_dish}")
+
+                chosen_side_dish = input(
+                    "Choose a side dish (enter the number): ")
+                print(f"You chose {
+                      side_dishes[int(chosen_side_dish) - 1]} as a side dish.")
+            else:
+                print("No side dishes available.")
+
+        response_soup = input("Do you want any soup? (yes/no): ").lower()
+        if response_soup == "yes":
+            # List all soups and let the user choose
+            soups = [dish for dish in dishes.keys() if dishes[dish]
+                     ['type'] == 'soup']
+            print("\nAvailable Soups:")
+            for i, soup in enumerate(soups, start=1):
+                print(f"{i}. {soup}")
+
+            chosen_soup = input("Choose a soup (enter the number): ")
+            print(f"You chose {soups[int(chosen_soup) - 1]} as a soup.")
+
+# Rest of the code remains unchanged...
 
 
 def show_ingredients_info(dish):
@@ -68,21 +107,16 @@ def update_rejected_ingredients(dish):
 
     all_ingredients = dishes[dish]['ingredients']
 
-    # Display ingredients and prompt user to select rejected ones
     ingredients = show_ingredients_info(dish)
     print(f"\nIngredients for {dish}:")
     for i, ingredient in enumerate(ingredients, start=1):
         print(f"[{i}] {ingredient}")
 
-    # Prompt user to enter numbers of rejected ingredients
     rejected_indices_str = input(
         "Enter the numbers of ingredients not at home (comma-separated): ")
-
-    # Convert user input into a list of indices
     rejected_indices = [
         int(index) - 1 for index in rejected_indices_str.split(",")]
 
-    # Update rejected ingredients for the chosen dish
     rejected_ingredients[dish].update(
         all_ingredients[index] for index in rejected_indices)
 
