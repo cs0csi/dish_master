@@ -62,6 +62,37 @@ def get_recommendation():
                 input("Enter the maximum preparation time you have (in minutes): "))
         elif reason == f"I would not like {dishes[dish]['category']} food now":
             excluded_categories.add(dishes[dish]['category'])
+    # Inside get_recommendation() function, after asking if the dish is suitable
+    elif response == "yes":
+        response_side = input("Do you want any side dish? (yes/no): ").lower()
+        if response_side == "yes":
+            # Filter available side dishes
+            side_dishes = [dish for dish in dishes.keys(
+            ) if dishes[dish]['type'] == 'side_dish']
+
+            if side_dishes:
+                print("\nAvailable Side Dishes:")
+                for i, side_dish in enumerate(side_dishes, start=1):
+                    print(f"{i}. {side_dish}")
+
+                chosen_side_dish = input(
+                    "Choose a side dish (enter the number): ")
+                print(f"You chose {
+                      side_dishes[int(chosen_side_dish) - 1]} as a side dish.")
+            else:
+                print("No side dishes available.")
+
+        response_soup = input("Do you want any soup? (yes/no): ").lower()
+        if response_soup == "yes":
+            # List all soups and let the user choose
+            soups = [dish for dish in dishes.keys() if dishes[dish]
+                     ['type'] == 'soup']
+            print("\nAvailable Soups:")
+            for i, soup in enumerate(soups, start=1):
+                print(f"{i}. {soup}")
+
+            chosen_soup = input("Choose a soup (enter the number): ")
+            print(f"You chose {soups[int(chosen_soup) - 1]} as a soup.")
 
 # Rest of the code remains unchanged...
 
