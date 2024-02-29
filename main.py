@@ -18,17 +18,19 @@ def get_recommendation():
     global excluded_categories
     global max_preparation_time
 
-    dish_options = [dish for dish in dishes.keys() if not any(
-        ingredient in rejected_ingredients[dish] for ingredient in dishes[dish]['ingredients']) and
-        dishes[dish]['category'] not in excluded_categories and
-        (max_preparation_time is None or dishes[dish]['preparation_time'] <= max_preparation_time)]
+    main_dish_options = [dish for dish in dishes.keys() if
+                         dishes[dish]['type'] == 'main' and
+                         not any(ingredient in rejected_ingredients[dish] for ingredient in dishes[dish]['ingredients']) and
+                         dishes[dish]['category'] not in excluded_categories and
+                         (max_preparation_time is None or dishes[dish]['preparation_time'] <= max_preparation_time)]
 
-    if not dish_options:
-        print("Sorry, no suitable dishes available based on your current restrictions.")
+    if not main_dish_options:
+        print(
+            "Sorry, no suitable main dishes available based on your current restrictions.")
         return
 
-    dish = random.choice(dish_options)
-    print(f"Recommended dish: {dish}")
+    dish = random.choice(main_dish_options)
+    print(f"Recommended main dish: {dish}")
 
     ingredients = show_ingredients_info(dish)
     print(f"\nIngredients for {dish}:")
