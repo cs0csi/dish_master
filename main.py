@@ -60,7 +60,113 @@ async def button_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif user_response == 'no':
         # User declined the recommendation
         await query.edit_message_text("Okay, let me find another option.")
-        # Continue with the rest of the code as needed
+
+        # Add your logic here to generate another recommendation
+        # You can use the logic from get_recommendation or customize it as needed
+        main_dish_options = [dish for dish in dishes.keys() if
+                             dishes[dish]['type'] == 'main' and
+                             not any(ingredient in rejected_ingredients[dish] for ingredient in dishes[dish]['ingredients']) and
+                             dishes[dish]['category'] not in excluded_categories and
+                             (max_preparation_time is None or dishes[dish]['preparation_time'] <= max_preparation_time)]
+
+        if not main_dish_options:
+            await query.edit_message_text("Sorry, no suitable main dishes available based on your current restrictions.")
+            return
+
+        dish = random.choice(main_dish_options)
+
+        # Extract ingredients and preparation time for the chosen dish
+        ingredients = ", ".join(dishes[dish]['ingredients'])
+        preparation_time = dishes[dish]['preparation_time']
+
+        # Send a message to the user with the recommended main dish, ingredients, and preparation time
+        keyboard = [[InlineKeyboardButton("Yes", callback_data='yes'),
+                     InlineKeyboardButton("No", callback_data='no')]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        message_text = (
+            f"Recommended main dish: {dish}\n"
+            f"Ingredients: {ingredients}\n"
+            f"Preparation time: {preparation_time} minutes\n"
+            "Is this suitable?"
+        )
+
+        await query.edit_message_text(message_text, reply_markup=reply_markup)
+        # await handle_rejection(dish)
+
+
+""" async def handle_rejection(dish):
+    response = input("Is this suitable? (yes/no): ").lower()
+
+    if response == "no":
+        reason_options = [
+            f"I would not like {dishes[dish]['category']} food now",
+            f"There are no ingredients at home for the suggested {
+                dishes[dish]['category']} dish",
+            f"I don't have that much time",
+        ]
+
+        print("\nReason options:")
+        for i, reason in enumerate(reason_options, start=1):
+            print(f"{i}. {reason}")
+
+        reason_index = int(
+            input("Choose a reason by entering its number (1, 2, etc.): ")) - 1
+        reason = reason_options[reason_index]
+
+        if reason == f"There are no ingredients at home for the suggested {dishes[dish]['category']} dish":
+            update_rejected_ingredients(dish)
+        elif reason == f"I don't have that much time":
+            max_preparation_time = int(
+                input("Enter the maximum preparation time you have (in minutes): "))
+        elif reason == f"I would not like {dishes[dish]['category']} food now":
+            excluded_categories.add(dishes[dish]['category'])
+
+    elif response == "yes":
+        response_side = input("Do you want any side dish? (yes/no): ").lower()
+        side_dish = None
+
+        if response_side == "yes":
+            # Filter available side dishes
+            side_dishes = [d for d in dishes.keys() if dishes[d]
+                           ['type'] == 'side_dish']
+
+            if side_dishes:
+                print("\nAvailable Side Dishes:")
+                for i, s_dish in enumerate(side_dishes, start=1):
+                    print(f"{i}. {s_dish}")
+
+                chosen_side_dish = input(
+                    "Choose a side dish (enter the number): ")
+                side_dish = side_dishes[int(chosen_side_dish) - 1]
+                print(f"You chose {side_dish} as a side dish.")
+            else:
+                print("No side dishes available.")
+
+        response_soup = input("Do you want any soup? (yes/no): ").lower()
+        soup = None
+
+        if response_soup == "yes":
+            # List all soups and let the user choose
+            soups = [d for d in dishes.keys() if dishes[d]['type'] == 'soup']
+            print("\nAvailable Soups:")
+            for i, s in enumerate(soups, start=1):
+                print(f"{i}. {s}")
+
+            chosen_soup = input("Choose a soup (enter the number): ")
+            soup = soups[int(chosen_soup) - 1]
+            print(f"You chose {soup} as a soup.")
+
+        print(f"\nRecipe for {dish}:")
+        print(dishes[dish]['recipe'])
+
+        if side_dish:
+            print(f"\nRecipe for {side_dish}:")
+            print(dishes[side_dish]['recipe'])
+
+        if soup:
+            print(f"\nRecipe for {soup}:")
+            print(dishes[soup]['recipe']) """
 
 
 def handle_response(text: str) -> str:
