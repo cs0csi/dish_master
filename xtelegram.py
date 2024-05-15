@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 # https://www.youtube.com/watch?v=vZtm1wuA2yc
-TOKEN = '6080214194:AAHvBwONC54vgXBJc8Idvq33FJHrVsb2m8o'
+TOKEN = ''
 BOT_USERNAME = Final = 'BAnanan'
 
 
